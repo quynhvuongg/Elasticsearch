@@ -1,10 +1,10 @@
-# Elasticsearch
+# [Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)
 
 Elasticsearch là một công cụ tìm kiếm dựa trên nền tảng Apache Lucene. Nó cung cấp một bộ máy tìm kiếm dạng phân tán, có đầy đủ công cụ với một giao diện web HTTP có hỗ trợ dữ liệu JSON. Elasticsearch được phát triển bằng Java và được phát hành dạng nguồn mở theo giấy phép Apache.
 
-## Features
+## Usages
 
-Elasticsearch cung cấp tìm kiếm `near real-time full-text` và phân tích được tất cả loại dữ liệu dù là dạng văn bản có cấu trúc hay không có cấu trúc, dữ liệu số hay dữ liệu không gian địa lý đều đươc Elasticsearch lưu trữ và set chỉ số cho nó một cách hiệu quả hỗ trợ việc tìm kiếm nhanh chóng hơn. Nhờ đó, nó được sử dụng trong nhiều trường hợp như:
+Elasticsearch cung cấp tìm kiếm `near real-time full-text` và phân tích được tất cả loại dữ liệu dù là dạng văn bản có cấu trúc hay không có cấu trúc, dữ liệu số hay dữ liệu không gian địa lý đều được Elasticsearch lưu trữ và set chỉ số cho nó một cách hiệu quả hỗ trợ việc tìm kiếm nhanh chóng hơn. Nhờ đó, nó được sử dụng trong nhiều trường hợp như:
 
 - Thêm search box cho một ứng dụng hoặc website có khả năng tìm kiếm nhanh chóng.
 - Lưu trữ và phân tích logs, metrics và dữ liệu sự kiện bảo mật.
@@ -20,7 +20,7 @@ Elasticsearch cung cấp tìm kiếm `near real-time full-text` và phân tích 
 - Elasticsearch được kế thừa từ Lucene Apache.
 - Elasticsearch thực chất hoạt động như 1 web server, có khả năng tìm kiếm nhanh chóng (near realtime) thông qua giao thức RESTful.
 - Elasticsearch có khả năng phân tích và thống kê dữ liệu.
-- Elasticsearch chạy trên server riêng và đồng thời giao tiếp thông qua RESTful do vậy nên nó không phụ thuộc vào client viết bằng gì hay hệ thống hiện tại viết bằng gì nên việc tích hợp nó vào hệ thống bạn là dễ dàng, chỉ cần gửi request http lên là nó trả về kết quả.
+- Elasticsearch chạy trên server riêng và đồng thời giao tiếp thông qua RESTful do vậy nên nó không phụ thuộc vào client viết bằng gì hay hệ thống hiện tại viết bằng gì nên việc tích hợp nó vào hệ thống là dễ dàng, chỉ cần gửi request http sau nó trả về kết quả.
 - Elasticsearch là 1 hệ thống phân tán và có khả năng mở rộng tuyệt vời (horizontal scalability) bằng cách thêm node cho nó, nó sẽ tự động auto mở rộng cho bạn.
 
 ## Glossary
@@ -35,90 +35,73 @@ Elasticsearch cho phép tìm kiếm bất cứ đâu trong trường mong muốn
 
 3. Document
 
-Document là một JSON object với một số dữ liệu, đây là đơn vị nhỏ nhất để lưu trữ dữ liệu trong Elasticsearch.
+Document là một JSON object với một số dữ liệu, đây là đơn vị nhỏ nhất để lưu trữ dữ liệu trong Elasticsearch. Mỗi document được lưu trữ và đánh index.
 
-4. Shard
+4. Index
 
-Shard là đối tượng của Lucene , là tập con các document của 1 Index. Một Index có thể được chia thành nhiều shard.
+Index là một tập hợp documents có một số điểm giống nhau.
+
+Mỗi index được xác định bằng một tên (chữ thường) và tên này được dùng khi thực hiện tìm kiếm, cập nhật và xóa các hoạt động đối với documents trong đó.
+
+Thêm index là bước quan trọng trong việc chạy một công cụ tìm kiếm. Nếu không lập index cho nội dung, bạn sẽ không thể truy vấn nội dung đó bằng cách sử dụng Elaticsearch hoặc tận dụng bất kỳ tính năng tìm kiếm mạnh mẽ nào mà Elaticsearch cung cấp.
+
+5. Mapping
+
+Mapping là một định nghĩa lược đồ (schema) cho index.
+
+Một mapping có thể được xác định cụ thể hoặc nó sẽ được tạo tự động khi một documents được thêm index.
+
+5. Shard
+
+Shard là đối tượng của Lucene, là tập con các document của 1 Index. Một Index có thể được chia thành nhiều shard.
+
 Mỗi node bao gồm nhiều Shard. Chính vì thế Shard mà là đối tượng nhỏ nhất, hoạt động ở mức thấp nhất, đóng vai trò lưu trữ dữ liệu.
-Chúng ta gần như không bao giờ làm việc trực tiếp với các Shard vì Elasticsearch đã support toàn bộ việc giao tiếp cũng như tự động thay đổi các Shard khi cần thiết.
-Có 2 loại Shard là : primary shard và replica shard.
+
+Shard là đối tượng quan trọng trong Elasticsearch vì nó cho phép bạn:
+
+- Phân chia chiều ngang, tỷ lệ khối lượng nội dung của bạn.
+
+- Phân phối và song song hóa các hoạt động trên các shard (có khả năng trên nhiều nút), do đó làm tăng hiệu suất và thông lượng.
+
+Có 2 loại Shard là: primary shard và replica shard.
 
 - Primary shard
-Primary Shard là sẽ lưu trữ dữ liệu và đánh index. Sau khi đánh xong dữ liệu sẽ được vận chuyển tới các replica shard.
-Mặc định của Elasticsearch là mỗi index sẽ có 5 primary shard và với mỗi primary shard thì sẽ đi kèm với 1 replica Shard.
+  - Primary Shard là sẽ lưu trữ dữ liệu và đánh index. Sau khi đánh xong dữ liệu sẽ được vận chuyển tới các replica shard.
+  - Mặc định của Elasticsearch là mỗi index sẽ có 5 primary shard và với mỗi primary shard thì sẽ đi kèm với 1 replica Shard.
 
 - Replica shard
-Replica shard đúng như cái tên của nó, nó là nơi lưu trữ dữ liệu nhân bản của primary shard.
 
-Replica shard có vai trò đảm bảo tính toàn vẹn của dữ liệu khi Primary Shard xảy ra vấn đề.
+  - Replica shard đúng như cái tên của nó, nó là nơi lưu trữ bản sao của primary shard.
 
-5. Index
-
-Index là tên logic ánh xạ đến một hoặc nhiều primary shard.
-
-Trong Elasticsearch, sử dụng một cấu trúc được gọi là inverted index . Nó được thiết kế để cho phép tìm kiếm full-text search. Cách thức của nó khá đơn giản, các văn bản được phân tách ra thành từng từ có nghĩa sau đó sẽ được map xem thuộc văn bản nào. Khi search tùy thuộc vào loại search sẽ đưa ra kết quả cụ thể.
-
-VÍ dụ : Chúng ta có 2 văn bản cụ thể như sau :
-
-```sh
-1,The quick brown fox jumped over the lazy dog
-2,Quick brown foxes leap over lazy dogs in summer
-```
-
-Để tạo ra một [inverted index](https://www.elastic.co/guide/en/elasticsearch/guide/current/inverted-index.html), trước hết chúng ta sẽ phân chia nội dung của từng tài liệu thành các từ riêng biệt (chúng gọi là terms), tạo một danh sách được sắp xếp của tất cả terms duy nhất, sau đó liệt kê tài liệu nào mà mỗi thuật ngữ xuất hiện. Kết quả như sau:
-
-```sh
-Term      Doc_1  Doc_2
--------------------------
-Quick   |       |  X
-The     |   X   |
-brown   |   X   |  X
-dog     |   X   |
-dogs    |       |  X
-fox     |   X   |
-foxes   |       |  X
-in      |       |  X
-jumped  |   X   |
-lazy    |   X   |  X
-leap    |       |  X
-over    |   X   |  X
-quick   |   X   |
-summer  |       |  X
-the     |   X   |
-------------------------
-```
-
-Khi muốn tìm kiếm màu quick brown, chúng ta chỉ cần tìm trong các document trong đó mỗi term có xuất hiện hay không.
-
-```sh
-Term      Doc_1  Doc_2
--------------------------
-brown   |   X   |  X
-quick   |   X   |
-------------------------
-Total   |   2   |  1
-```
-
-Ở đây cả 2 documents đều match với từ khóa. Tuy nhiên có thể  thấy Doc_1 match nhiều hơn, kết quả tìm kiếm sẽ đưa đến nội dung của Doc_1.
+  - Replica shard có vai trò đảm bảo tính toàn vẹn của dữ liệu khi Primary Shard xảy ra vấn đề.
 
 6. Node
 
-Là trung tâm hoạt động của Elasticsearch. Là nơi lưu trữ dữ liễu ,tham gia thực hiện đánh index của cluster cũng như thực hiện các thao tác tìm kiếm.Mỗi node được định danh bằng 1 unique name
+Node là trung tâm hoạt động của Elasticsearch cũng là một phần của cluster, nơi lưu trữ dữ liệu, tham gia thực hiện đánh index của cluster cũng như thực hiện các thao tác tìm kiếm. Mỗi node được định danh bằng 1 unique name.
+
+Các loại node:
+
+- Master node: Điều khiển cluster
+- Data node: Lưu dữ liệu và thực hiện các hoạt động liên quan đến dữ liệu như CRUD, tìm kiếm và tập hợp.
+- Ingest node: Có khả năng áp dụng một `ingest pipeline` vào document để chuyển đổi và thêm thông tin cho trước khi thêm index.
+- Machine learning node: Được sử dụng trong chức năng machine learning.
+- Transform node: Sử dụng khi bạn muốn chuyển đổi dữ liệu.
 
 7. Cluster
 
-Tập hợp các nodes hoạt động cùng với nhau, chia sẽ cùng thuộc tính cluster.name. Chính vì thế Cluster sẽ được xác định bằng 1 ‘unique name’.
+Một Cluster bao gồm một hoăc tập hợp các nodes hoạt động cùng với nhau, chia sẽ cùng thuộc tính `cluster.name`. Chính vì thế Cluster sẽ được xác định bằng 1 `unique name`.
 
-Mỗi cluster có một node chính (master), được lựa chọn một cách tự động và có thể thay thế nếu sự cố xảy ra. Một cluster có thể gồm 1 hoặc nhiều nodes. Các nodes có thể hoạt động trên cùng 1 server . Tuy nhiên trong thực tế , một cluster sẽ gồm nhiều nodes hoạt động trên các server khác nhau để đảm bảo nếu 1 server gặp sự cố thì server khác (node khác) có thể hoạt động đầy đủ chức năng so với khi có 2 servers. Các node có thể tìm thấy nhau để hoạt động trên cùng 1 cluster qua giao thức unicast.
-
-Chức năng chính của Cluster đó chính là quyết định xem shards nào được phân bổ cho node nào và khi nào thì di chuyển các Cluster để cân bằng lại Cluster.
+Mỗi cluster có một node chính (master), được lựa chọn một cách tự động và có thể thay thế nếu sự cố xảy ra. Trong một cluster các node cùng nhau lưu giữ toàn bộ dữ liệu và cung cấp khả năng liên kết và tìm kiếm dữ liệu qua tất cả các nodes.
 
 ## Install
 
-Docker: `docker pull docker.elastic.co/elasticsearch/elasticsearch:7.8.0`
+Docker:
 
-Cài đặt multi-node cluster sử dụng docker-compose
+```sh
+docker pull docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+```
+
+Cài đặt multi-node cluster sử dụng docker-compose:
 
 ```sh
 version: '3'
@@ -186,83 +169,30 @@ volumes:
 
 ```
 
-Sử  dụng: `curl -X GET "localhost:9200/_cat/nodes?v&pretty"` để kiểm tra các node up and running.
-
-## REST API
-
-### Index
-
-1. Tạo 1 index
+Kiểm tra các node up and running:
 
 ```sh
-curl -X PUT "localhost:9200/twitter?pretty"
+curl -X GET "localhost:9200/_cat/nodes?v&pretty"
 ```
 
-hoặc chỉ định các [tham số](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html#indices-create-api-path-params) cụ thể cho index như settings, mappings, aliases
+## [Architecture](https://www.elastic.co/blog/sizing-hot-warm-architectures-for-logging-and-metrics-in-the-elasticsearch-service-on-elastic-cloud)
 
-```sh
-curl -X PUT "localhost:9200/test" -H 'Content-Type: application/json' -d'
-{
-    "settings" : {
-        "number_of_shards" : 1
-    },
-    "mappings" : {
-        "properties" : {
-            "field1" : { "type" : "text" }
-        }
-    }
-}
-'
-```
+### Basic architecture
 
-Sau khi index được tạo sẽ trả về :
+![ ](https://images.contentstack.io/v3/assets/bltefdd0b53724fa2ce/blt5365b41d3c2bc21c/5c57e2988d25f6030ca0437d/uniform_cluster.png)
 
-```sh
-{
-    "acknowledged": true,
-    "shards_acknowledged": true,
-    "index": "test"
-}
-```
+Trong ES cluster tất cả data nodes có cùng đặc điểm kỹ thuật(specification), đảm nhiệm tất cả vai trò và chia sẻ index và tải truy vấn cuối cùng.
 
-2. Liệt kê các index
+### Hot-warm architecture
 
-```sh
-curl -X GET "localhost:9200/_cat/indices"
-```
+![ ](https://images.contentstack.io/v3/assets/bltefdd0b53724fa2ce/blte59c4541ff94d917/5c57e292a2b68bd90b9fee90/hot-warm_cluster.png)
 
-3. Kiểm tra index
+Kiến trúc có 2 loại data nodes khác nhau:
 
-```sh
-curl -X GET "localhost:9200/test"
-```
+- Hot data node: Chứa tất cả các index gần đây nhất, do đó xử lý tất cả index load trong cụm.
 
-4. Xóa index
+  Vì dữ liệu gần đây nhất cũng thường được truy vấn thường xuyên nhất, các node này có xu hướng rất bận rộn. Thêm index vào Elaticsearch có thể rất tốn CPU và I/O, các nút này cần phải hoạt động tích cực và có lưu trữ nhanh -> ổ SSDs gắn liền cục bộ.
 
-```sh
-curl -X DELETE "localhost:9200/test"
-```
+- Warm data node: Xử lý lưu trữ dài hạn read-only indices trong cụm theo cách hiệu quả về chi phí. Chúng cần số lượng CPU và RAM tốt, disk quay or SAN thay cho SSDs
 
-5. **Request body**
-
-```sh
-curl -X GET "localhost:9200/test?q=abc=xyz"
-```
-
-### Search
-
-Khi muốn tìm một số dữ liệu  đã nhập vào một index của Elasticsearch thì gửi yêu cầu đến `_search` endpoint:
-
-```sh
-curl -X GET "localhost:9200/test/_search"
-```
-
-**Request body**:
-
-```sh
-curl -X GET "localhost:9200/_search?q=user:kimchy"
-```
-
-```sh
-curl -X GET "localhost:9200/_search?q=message:number&size=0&terminate_after=1"
-```
+Khi indices trên các hot data node vượt quá thời gian lưu cho các nút đó sẽ được chuyển đến các warm data node.
